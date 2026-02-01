@@ -47,8 +47,7 @@ export const BENGALI_TEXT = {
   matched: 'হিসাব মিলে গেছে',
   cashAdjustment: 'ক্যাশ সমন্বয় (লাভ/লস)',
   dbSetup: 'ডাটাবেস সেটআপ',
-  aiAssistant: 'এআই সহকারী',
-  aiAskPlaceholder: 'আপনার প্রশ্ন এখানে লিখুন...',
+
   dbSetupTitle: 'ডাটাবেস সেটআপ প্রয়োজন',
   dbSetupInstructions: 'অনুগ্রহ করে নিচের SQL কোডটি কপি করে আপনার Supabase প্রজেক্টের SQL Editor-এ রান করুন।',
   resetPasswordEmailSent: 'পাসওয়ার্ড রিসেট করার জন্য আপনার ইমেইলে একটি লিঙ্ক পাঠানো হয়েছে। অনুগ্রহ করে আপনার ইনবক্স চেক করুন।'

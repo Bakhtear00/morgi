@@ -1,7 +1,7 @@
 
 
 export const BENGALI_TEXT = {
-  appName: 'সহজ পোল্ট্রি হিসাব',
+  appName: 'বেলায়েত প্রোল্টি স্টোর',
   purchase: 'কেনা (Purchase)',
   sales: 'বেচা (Sales)',
   stock: 'স্টক (Stock)',

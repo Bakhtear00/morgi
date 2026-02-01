@@ -54,9 +54,9 @@ export const BENGALI_TEXT = {
   resetPasswordEmailSent: 'পাসওয়ার্ড রিসেট করার জন্য আপনার ইমেইলে একটি লিঙ্ক পাঠানো হয়েছে। অনুগ্রহ করে আপনার ইনবক্স চেক করুন।'
 };
 
-export const POULTRY_TYPES = ['ব্রয়লার', 'সোনালী', 'লেয়ার', 'দেশী', 'কক'];
-export const EXPENSE_CATEGORIES = ['খাবার', 'ঔষধ', 'কারেন্ট বিল', 'অন্যান্য'];
-export const NOTES = [1000, 500, 200, 100, 50, 20, 10, 5, 2, 1];
+export const POULTRY_TYPES = ['ব্রয়লার', 'সোনালী', 'লেয়ার', 'দেশী','প্যারেন্ট', 'কক'];
+export const EXPENSE_CATEGORIES = ['খাবার','মুরগির খাদ্য','কারেন্ট বিল', 'অন্যান্য'];
+export const NOTES = [1000, 500, 200, 100, 50, 20, 10, 5];
 
 export const getLocalDateString = (date = new Date()): string => {
   const year = date.getFullYear();

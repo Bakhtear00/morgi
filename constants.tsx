@@ -1,7 +1,7 @@
 
 
 export const BENGALI_TEXT = {
-  appName: 'বেলায়েত প্রোল্টি স্টোর',
+ appName: 'বেলায়েত প্রোল্টি স্টোর',
   purchase: 'কেনা (Purchase)',
   sales: 'বেচা (Sales)',
   stock: 'স্টক (Stock)',
@@ -54,8 +54,7 @@ export const BENGALI_TEXT = {
 };
 
 export const POULTRY_TYPES = ['ব্রয়লার', 'সোনালী', 'লেয়ার', 'দেশী','প্যারেন্ট', 'কক'];
-export const EXPENSE_CATEGORIES = ['ডেইলি খরচ
-','মুরগির খাদ্য','কারেন্ট বিল', 'অন্যান্য'];
+export const EXPENSE_CATEGORIES = ['ডেইলি খরচ','মুরগির খাদ্য','কারেন্ট বিল', 'অন্যান্য'];
 export const NOTES = [1000, 500, 200, 100, 50, 20, 10, 5];
 
 export const getLocalDateString = (date = new Date()): string => {

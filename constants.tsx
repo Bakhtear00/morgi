@@ -4,6 +4,7 @@
 
 export const BENGALI_TEXT = {
   appName: 'সহজ পোল্ট্রি',
+
   purchase: 'কেনা (Purchase)',
   sales: 'বেচা (Sales)',
   stock: 'স্টক (Stock)',

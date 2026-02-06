@@ -1,7 +1,9 @@
 
 
+
+
 export const BENGALI_TEXT = {
- appName: 'সহজ পোল্ট্রি হিসাব',
+  appName: 'সহজ পোল্ট্রি',
   purchase: 'কেনা (Purchase)',
   sales: 'বেচা (Sales)',
   stock: 'স্টক (Stock)',
@@ -47,14 +49,15 @@ export const BENGALI_TEXT = {
   matched: 'হিসাব মিলে গেছে',
   cashAdjustment: 'ক্যাশ সমন্বয় (লাভ/লস)',
   dbSetup: 'ডাটাবেস সেটআপ',
-
+  aiAssistant: 'এআই সহকারী',
+  aiAskPlaceholder: 'আপনার প্রশ্ন এখানে লিখুন...',
   dbSetupTitle: 'ডাটাবেস সেটআপ প্রয়োজন',
   dbSetupInstructions: 'অনুগ্রহ করে নিচের SQL কোডটি কপি করে আপনার Supabase প্রজেক্টের SQL Editor-এ রান করুন।',
   resetPasswordEmailSent: 'পাসওয়ার্ড রিসেট করার জন্য আপনার ইমেইলে একটি লিঙ্ক পাঠানো হয়েছে। অনুগ্রহ করে আপনার ইনবক্স চেক করুন।'
 };
 
 export const POULTRY_TYPES = ['ব্রয়লার', 'সোনালী', 'লেয়ার', 'দেশী','প্যারেন্ট', 'কক'];
-export const EXPENSE_CATEGORIES = ['ডেইলি খরচ','মুরগির খাদ্য','কারেন্ট বিল', 'অন্যান্য'];
+export const EXPENSE_CATEGORIES = ['খাবার','মুরগির খাদ্য','কারেন্ট বিল', 'অন্যান্য'];
 export const NOTES = [1000, 500, 200, 100, 50, 20, 10, 5];
 
 export const getLocalDateString = (date = new Date()): string => {

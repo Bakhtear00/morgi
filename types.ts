@@ -45,15 +45,25 @@ export interface Expense {
 }
 
 // --- আর্থিক রেকর্ড ---
+// types.ts
+export interface Log {
+  id: string; // UUID এর জন্য string ই থাকবে
+  date: string;
+  time: string;
+  type: 'ADD' | 'DUE';
+  amount: number;
+}
+
 
 export interface DueRecord {
-  id: string;
-  customer_name: string;
-  mobile?: string;
-  address?: string;
-  amount: number;
-  paid: number;
-  date: string;
+    id: string;
+    customer_name: string;
+    mobile?: string;
+    amount: number;
+    paid: number;
+    date: string;
+    image?: string;
+    logs: Log[]; // Log ইন্টারফেস এখানে ব্যবহার হচ্ছে
 }
 
 export interface CashLog {

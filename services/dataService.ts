@@ -161,19 +161,34 @@ export const DataService = {
   },
 
   // --- Data Access ---
+
   getPurchases: async (): Promise<Purchase[]> => {
     const { data, error } = await supabase.from('purchases').select('*').order('date', { ascending: false });
     if (error) throw error;
     return data;
   },
-  addPurchase: async (p: Omit<Purchase, 'id' | 'created_at'>) => {
+addPurchase: async (p: Omit<Purchase, 'id' | 'created_at'>): Promise<Purchase> => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Authentication required.");
-    const { data, error } = await supabase.from('purchases').insert([{ ...p, user_id: user.id }]).select().single();
+
+    const { data, error } = await supabase
+        .from('purchases')
+        .insert([{ ...p, user_id: user.id }])
+        .select() // এই লাইনটি ডাটা ফেরত পাওয়ার জন্য জরুরি
+        .single();
+
     if (error) throw error;
-    await checkAndTriggerAutoSave(p.type);
-    return data;
-  },
+    return data as Purchase; // এখন এটি আইডি সহ ডাটা রিটার্ন করবে
+},
+deleteCashLogByReference: async (transactionId: string) => {
+    const { error } = await supabase
+        .from('cash_logs')
+        .delete()
+        .or(`note.ilike.%[ref:log_id:${transactionId}]%,note.ilike.%[ref:due_log_id:${transactionId}]%`);
+
+    if (error) throw error;
+},
+
   updatePurchase: async (p: Omit<Purchase, 'id' | 'created_at' | 'user_id'>, id: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Authentication required.");
@@ -331,21 +346,44 @@ export const DataService = {
     if (error) throw error;
     return data;
   },
-  addDue: async (d: Omit<DueRecord, 'id' | 'created_at'>) => {
+addDue: async (d: Omit<DueRecord, 'id' | 'created_at'>): Promise<DueRecord> => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Authentication required.");
-    const { error } = await supabase.from('dues').insert([{ ...d, user_id: user.id }]);
+
+    const { data, error } = await supabase
+        .from('dues')
+        .insert([{ ...d, user_id: user.id }])
+        .select() // এই .select() ডাটা ফেরত দিবে
+        .single();
+
     if (error) throw error;
-  },
-  updateDue: async (d: Partial<Omit<DueRecord, 'id' | 'created_at' | 'user_id'>>, id: string) => {
-    const { error } = await supabase.from('dues').update(d).eq('id', id);
-    if (error) throw error;
-  },
-  deleteDue: async (id: string) => {
+    return data as DueRecord;
+},
+updateDue: async (d: Partial<Omit<DueRecord, 'id' | 'created_at' | 'user_id'>>, id: string) => {
+  // শুধুমাত্র ডিউ প্রোফাইল আপডেট হবে
+  // কারণ ক্যাশ লগের এন্ট্রি আমরা সরাসরি DueModule.tsx থেকে দিচ্ছি
+  const { error } = await supabase.from('dues').update(d).eq('id', id);
+  if (error) throw error;
+},
+// DataService.ts er vitor deleteDue function
+// DataService.ts এর ভেতর
+// ১. পুরো কাস্টমার প্রোফাইল এবং তার সব ক্যাশ লগ ডিলিট
+
+    // ... অন্যান্য ফাংশন
+    
+  deleteDue: async (id: string, customerName: string) => {
+    // ১. কাস্টমারের আইডি দিয়ে রেফারেন্স করা লগগুলো মুছবে
+    // ২. অথবা নোটে কাস্টমারের নাম আছে এমন সব লগ মুছবে
+    const { error: logError } = await supabase.from('cash_logs')
+        .delete()
+        .or(`note.ilike.%[ref:due:${id}]%,note.ilike.%[ref:due_log_id:${id}]%,note.ilike.%বাকি: ${customerName}%`);
+
+    if (logError) console.error("Cash log deletion error:", logError);
+
+    // ৩. সবশেষে কাস্টমার প্রোফাইল মুছবে
     const { error } = await supabase.from('dues').delete().eq('id', id);
     if (error) throw error;
-  },
-
+},
   getCashLogs: async (): Promise<CashLog[]> => {
     const { data, error } = await supabase.from('cash_logs').select('*').order('date', { ascending: false }).order('created_at', { ascending: false });
     if (error) throw error;
@@ -372,14 +410,18 @@ export const DataService = {
     return data;
   },
 
-  getResets: async (): Promise<{ [key: string]: string }> => {
-    const { data, error } = await supabase.from('user_resets').select('poultry_type, last_reset_time');
-    if (error) throw error;
-    return data.reduce((acc, curr) => {
-      acc[curr.poultry_type] = curr.last_reset_time;
-      return acc;
-    }, {});
-  },
+  
+// Ln 403 থেকে এভাবে লিখুন
+getResets: async (): Promise<{ [key: string]: string }> => {
+  const { data, error } = await supabase.from('user_resets').select('poultry_type, last_reset_time');
+  if (error) throw error;
+
+  // data চেক যোগ করা হয়েছে এবং acc এর টাইপ ডিফাইন করা হয়েছে
+  return (data || []).reduce((acc: { [key: string]: string }, curr: any) => {
+    acc[curr.poultry_type] = curr.last_reset_time;
+    return acc;
+  }, {});
+},
 
   calculateStock: (purchases: Purchase[], sales: Sale[], resets: { [key: string]: string }) => {
     const stockByType: { [key: string]: { pieces: number; kg: number; dead: number; } } = {};

@@ -15,7 +15,7 @@ import DueModule from './components/DueModule';
 import ReportModule from './components/ReportModule';
 import DenominationModule from './components/DenominationModule';
 import AuthModule from './components/AuthModule';
-import SettingsModule from './components/SettingsModule';
+
 import DatabaseSetupGuide from './components/DatabaseSetupGuide';
 import { ToastProvider } from './contexts/ToastContext';
 import { supabase } from './services/supabaseClient';
@@ -124,39 +124,56 @@ const AppContent: React.FC = () => {
         </div>
       </aside>
 
-      <main className="p-4 lg:p-10 max-w-7xl mx-auto">
-        <div className="lg:hidden flex items-center justify-between mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-           <h1 className="font-bold text-green-700 text-lg">{BENGALI_TEXT.appName}</h1>
-           <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} title={isOnline ? BENGALI_TEXT.online : BENGALI_TEXT.offline} />
+     
+
+<main className="p-4 lg:p-10 max-w-7xl mx-auto">
+  <div className="lg:hidden flex items-center justify-between mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+    <h1 className="font-bold text-green-700 text-lg">{BENGALI_TEXT.appName}</h1>
+    <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} title={isOnline ? BENGALI_TEXT.online : BENGALI_TEXT.offline} />
+  </div>
+
+  {/* Loading থাকলেও মডিউলগুলো দেখাবো, শুধু ডাটা না থাকলে Loader দেখাবো */}
+  {(loading && data.dues.length === 0) ? (
+    <div className="flex flex-col items-center justify-center h-[60vh] text-green-600">
+      <Loader2 className="w-12 h-12 animate-spin mb-4" />
+      <p className="font-bold">ডেটা লোড হচ্ছে...</p>
+    </div>
+  ) : (
+    <div className={loading ? "opacity-50 pointer-events-none" : ""}>
+      {activeTab === 'purchase' && <PurchaseModule purchases={data.purchases} refresh={refresh} />}
+      {activeTab === 'sales' && <SalesModule sales={data.sales} refresh={refresh} />}
+      {activeTab === 'stock' && <StockModule stock={data.stock} purchases={data.purchases} sales={data.sales} resets={data.resets} lotHistory={data.lotHistory} />}
+      {activeTab === 'expense' && <ExpenseModule expenses={data.expenses} refresh={refresh} />}
+      {activeTab === 'due' && <DueModule dues={data.dues} refresh={refresh} />}
+      {activeTab === 'cash' && <CashModule cashLogs={data.cashLogs} refresh={refresh} />}
+      {activeTab === 'calc' && <DenominationModule cashLogs={data.cashLogs} refresh={refresh} />}
+      {activeTab === 'reports' && <ReportModule purchases={data.purchases} sales={data.sales} expenses={data.expenses} cashLogs={data.cashLogs} />}
+    </div>
+  )}
+</main>
+
+      <nav className="lg:hidden fixed bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md border border-gray-100 rounded-[2.5rem] shadow-2xl z-50 overflow-hidden">
+  <div className="flex items-center gap-1 p-2 overflow-x-auto no-scrollbar scroll-smooth">
+    {mobileMenu.map(m => (
+      <button 
+        key={m.id} 
+        onClick={() => m.id === 'logout' ? handleSignOut() : setActiveTab(m.id)} 
+        className={`flex flex-col items-center justify-center transition-all min-w-[75px] py-2 px-1 rounded-2xl ${
+          activeTab === m.id 
+            ? 'text-green-600 bg-green-50 shadow-sm' 
+            : (m.id === 'logout' ? 'text-red-500' : 'text-gray-400')
+        }`}
+      >
+        <div className={`p-1.5 rounded-xl ${activeTab === m.id ? 'bg-green-100/50' : ''}`}>
+           <m.icon size={22} strokeWidth={activeTab === m.id ? 2.5 : 2} />
         </div>
-
-        {loading ? (
-          <div className="flex flex-col items-center justify-center h-[60vh] text-green-600">
-            <Loader2 className="w-12 h-12 animate-spin mb-4" />
-            <p className="font-bold">ডেটা লোড হচ্ছে...</p>
-          </div>
-        ) : (
-          <>
-            {activeTab === 'purchase' && <PurchaseModule purchases={data.purchases} refresh={refresh} />}
-            {activeTab === 'sales' && <SalesModule sales={data.sales} refresh={refresh} />}
-            {activeTab === 'stock' && <StockModule stock={data.stock} purchases={data.purchases} sales={data.sales} resets={data.resets} lotHistory={data.lotHistory} />}
-            {activeTab === 'expense' && <ExpenseModule expenses={data.expenses} refresh={refresh} />}
-            {activeTab === 'due' && <DueModule dues={data.dues} refresh={refresh} />}
-            {activeTab === 'cash' && <CashModule cashLogs={data.cashLogs} refresh={refresh} />}
-            {activeTab === 'calc' && <DenominationModule cashLogs={data.cashLogs} refresh={refresh} />}
-            {activeTab === 'reports' && <ReportModule purchases={data.purchases} sales={data.sales} expenses={data.expenses} cashLogs={data.cashLogs} />}
-          </>
-        )}
-      </main>
-
-      <nav className="lg:hidden fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md border border-gray-100 flex justify-around p-2 rounded-3xl shadow-2xl z-50">
-        {mobileMenu.map(m => (
-          <button key={m.id} onClick={() => m.id === 'logout' ? handleSignOut() : setActiveTab(m.id)} className={`flex flex-col items-center p-2 rounded-xl transition-all w-12 ${activeTab === m.id ? 'text-green-600 bg-green-50 scale-105' : (m.id === 'logout' ? 'text-red-500' : 'text-gray-400')}`}>
-            <m.icon size={20} />
-            <span className="text-[8px] mt-1 font-bold">{m.label}</span>
-          </button>
-        ))}
-      </nav>
+        <span className="text-[10px] mt-1 font-bold whitespace-nowrap">
+          {m.label}
+        </span>
+      </button>
+    ))}
+  </div>
+</nav>
     </div>
   );
 };
